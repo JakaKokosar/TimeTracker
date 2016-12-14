@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "813641041456",
+    "project_id": "emp-project"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813641041456:android:9bda4d78a3b7d096",
+        "android_client_info": {
+          "package_name": "koki_kambic.emp_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "813641041456-gjf2d7t4j16v4g7t4dtijs07b1inib7t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "koki_kambic.emp_project",
+            "certificate_hash": "34ABDDE1439271F28D5C01CC03A8DC36822EF50E"
+          }
+        },
+        {
+          "client_id": "813641041456-ap5gnoe8rosh9sotj037i2ti58b5p178.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARiI7MLvvBg_tXYmjpJEIbElG3Ftl8-Z0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

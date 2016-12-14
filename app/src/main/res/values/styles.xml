@@ -1,0 +1,33 @@
+<resources>
+
+    <!-- Login application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">?attr/colorPrimaryDark</item>
+    </style>
+
+    <!-- Task application theme. -->
+    <style name="TaskTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">?attr/colorPrimaryDark</item>
+    </style>
+
+
+    <style name="SignIn" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:theme">@style/Theme.SignIn</item>
+    </style>
+
+
+    <style name="Theme.SignIn" parent="AppTheme">
+        <item name="android:colorAccent">@color/colorPrimaryDark</item>
+        <item name="android:colorButtonNormal">@color/colorPrimaryDark</item>
+    </style>
+
+
+</resources>
