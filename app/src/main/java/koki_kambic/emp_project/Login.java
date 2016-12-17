@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -25,12 +26,13 @@ public class Login extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 4949;
 
     private static final String TAG = "SignInActivity";
-
+    DatabaseConnector myDb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        myDb = new DatabaseConnector(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -41,6 +43,7 @@ public class Login extends AppCompatActivity implements
                 .build();
 
         findViewById(R.id.btn_SignIn_google).setOnClickListener(this);
+        findViewById(R.id.btn_SignIn).setOnClickListener(this);
     }
 
 
@@ -55,6 +58,9 @@ public class Login extends AppCompatActivity implements
                 }
                 signIn();
                 break;
+            case R.id.btn_SignIn:
+                checkUser();
+
         }
 
     }
@@ -74,7 +80,16 @@ public class Login extends AppCompatActivity implements
 
 
     }
-
+    private void checkUser(){
+        String username="";
+        String password="";
+        myDb.open();
+        boolean userExist = myDb.UserExist(username);
+        EditText edit_text   = (EditText)findViewById(R.id.input_user);
+        if (userExist)
+            edit_text.setText("ni userja");
+        myDb.close();
+    }
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
