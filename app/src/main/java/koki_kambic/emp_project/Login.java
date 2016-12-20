@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -41,9 +42,9 @@ public class Login extends AppCompatActivity implements
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
         findViewById(R.id.btn_SignIn_google).setOnClickListener(this);
         findViewById(R.id.btn_SignIn).setOnClickListener(this);
+        findViewById(R.id.link_signup).setOnClickListener(this);
     }
 
 
@@ -60,7 +61,10 @@ public class Login extends AppCompatActivity implements
                 break;
             case R.id.btn_SignIn:
                 checkUser();
-
+                break;
+            case R.id.link_signup:
+                regUser();
+                break;
         }
 
     }
@@ -80,16 +84,34 @@ public class Login extends AppCompatActivity implements
 
 
     }
+    // check if username and password for local user are correct
     private void checkUser(){
-        String username="";
-        String password="";
+        TextView err = (TextView) findViewById(R.id.loginError_TxtView);
+        EditText username_ET = (EditText) findViewById(R.id.input_user);
+        EditText passwd_ET = (EditText) findViewById(R.id.input_password);
+        String username = username_ET.getText().toString();
+        String password=passwd_ET.getText().toString();
         myDb.open();
         boolean userExist = myDb.UserExist(username);
-        EditText edit_text   = (EditText)findViewById(R.id.input_user);
-        if (userExist)
-            edit_text.setText("ni userja");
+        if (userExist) {
+            boolean checkPasswd =myDb.CheckPassword(username, password);
+            if(checkPasswd){
+                Intent intent = new Intent(Login.this, Tasks.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("UserID", myDb.getLocalUserID(username));
+                intent.putExtras(bundle);
+                startActivity(intent);}
+            else err.setText("Napačno uporabniško ime ali geslo");
+        }
+        else err.setText("Urorabnik ne obstaja");
         myDb.close();
     }
+
+    private void regUser(){
+        Intent intent = new Intent(Login.this, Registration.class);
+        startActivity(intent);
+    }
+
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -114,9 +136,14 @@ public class Login extends AppCompatActivity implements
 
             Toast toast = Toast.makeText(Login.this, acct.getId(), Toast.LENGTH_SHORT);
             toast.show();
-
             String mFullName = acct.getDisplayName();
             Intent intent = new Intent(Login.this, Tasks.class);
+            //save id in database
+            myDb.insertUserID(Integer.parseInt(acct.getId()));
+            //send id to task activity
+            Bundle bundle = new Bundle();
+            bundle.putString("UserID", acct.getId());
+            intent.putExtras(bundle);
             startActivity(intent);
 
         }

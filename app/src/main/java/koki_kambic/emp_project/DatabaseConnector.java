@@ -6,36 +6,119 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Random;
 
 
 public class DatabaseConnector {
 
-    public static final String DATABASE_NAME = "Data";
+    private static final String DATABASE_NAME = "Data";
     private static final int DATABASE_VERSION = 1;
     private SQLiteDatabase database;
     private DatabaseOpenHelper databaseOpenHelper;
 
-    public DatabaseConnector(Context context) {
+    DatabaseConnector(Context context) {
         databaseOpenHelper = new DatabaseOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public void open() throws SQLException {
+    void open() throws SQLException {
         //create or open a database for reading/writing
         database = databaseOpenHelper.getWritableDatabase();
     }
 
-    public void close() {
+    void close() {
         if (database != null) database.close();
     }
 
-    public boolean UserExist(String username){
-        Cursor cr =  null;
-        cr =database.rawQuery("SELECT * FROM LocalUsers " +
-                "WHERE username = 'nejc';",null);
-        return (cr == null) ? false:true;
+    //check if userId exist
+    boolean ExistId(int id){
+        Cursor cr = database.rawQuery("SELECT * FROM Users " +
+                "WHERE id = '"+id+"';",null);
+        int i =cr.getCount();
+        cr.close();
+        return (i != 0);
     }
-
+    //check if local username exist
+     boolean UserExist(String username){
+         Cursor cr = database.rawQuery("SELECT * FROM LocalUsers " +
+                "WHERE username = '"+username+"';",null);
+         int i =cr.getCount();
+         cr.close();
+         return (i != 0);
+    }
+    //if password or/and username are incorrect then cr == null(return false)
+    boolean CheckPassword(String username, String password){
+        Cursor cr = database.rawQuery("SELECT * FROM LocalUsers " +
+                "WHERE username = '"+username+"' " +
+                "AND password = '"+password+"';",null);
+        int i =cr.getCount();
+        cr.close();
+        return (i != 0);
+    }
+    //generate id for local users
+    int generateID(){
+        int min = 10000000;
+        int max = 999999999;
+        Random r = new Random();
+        return r.nextInt((max - min) + 1) + min;
+    }
+    void insertUserID(int id){
+        if(!ExistId(id)) {
+            String insertValuesUsers = "INSERT INTO Users (id) " +
+                    "values('" + id + "')";
+            database.execSQL(insertValuesUsers);
+        }
+    }
+    //insert new task
+    void insertTask(String TaskName, String userID){
+        String insertValuesUsers = "INSERT INTO Tasks (idTask,idUser, name)" +
+                "values(NULL, '"+userID+"', '"+TaskName+"')";
+        database.execSQL(insertValuesUsers);
+    }
+    //return all tasks for the userID
+    ArrayList<String> getTasksByUserId(String id){
+        ArrayList <String> tasks = new ArrayList<String>();
+        Cursor cr = database.rawQuery("SELECT name FROM Tasks, Users " +
+                "WHERE Tasks.idUser = Users.id; " +
+                "AND Users.id = '"+id+"'",null);
+        if (cr.getCount() > 0)
+        {
+            cr.moveToFirst();
+            do {
+                tasks.add( cr.getString(cr.getColumnIndex("name")) );
+            } while (cr.moveToNext());
+            cr.close();
+        }
+            return tasks;
+    }
+    // insert new user
+    void insertLocaluser(String username, String passwd){
+        int id;
+        do {id = generateID();} while(ExistId(id));//dokler ni unikaten ID
+        insertUserID(id);
+        String insertValuesLocalUsers = "INSERT INTO LocalUsers " +
+                "(username, password, idUser)"+
+                "values('"+username+"','"+passwd+"','"+id+"');";
+        database.execSQL(insertValuesLocalUsers);
+    }
+    //return user ID
+    String getLocalUserID(String username){
+        String id="";
+        Cursor cr= database.rawQuery("SELECT id FROM Users, LocalUsers " +
+                "WHERE LocalUsers.idUser == Users.id " +
+                "AND LocalUsers.username = '"+username+"'",null);
+        cr.moveToFirst();
+        id = cr.getString(cr.getColumnIndexOrThrow("id"));
+        return id;
+    }
     private class DatabaseOpenHelper extends SQLiteOpenHelper {
+        //taski za vsakega userja
+        private String createTasks = "CREATE TABLE Tasks"
+                + "(idTask INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "idUser INTEGER NOT NULL ,"
+                + "name TEXT NOT NULL,"
+                + "FOREIGN KEY(idUser) REFERENCES Users(id));";
         // lokalni uporabniki
         private String createLocalUsers = "CREATE TABLE LocalUsers(username TEXT primary key NOT NULL,"
                 + "password TEXT NOT NULL,"
@@ -44,12 +127,7 @@ public class DatabaseConnector {
         //lokalni uporabniki + tisti ki se registrirajo z google računom
         private String createUsers = "CREATE TABLE Users"
                 + "(id INTEGER PRIMARY KEY NOT NULL);";
-        //taski za vsakega userja
-        private String createTasks = "CREATE TABLE Tasks"
-                + "(idTask INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "idUser INTEGER NOT NULL ,"
-                + "name TEXT NOT NULL,"
-                + "FOREIGN KEY(idUser) REFERENCES Users(id));";
+
         // časi za vsako opravilo
         private String createTime = "CREATE TABLE Time"
                 + "(idTime INTEGER PRIMARY KEY AUTOINCREMENT,"
