@@ -65,15 +65,31 @@
         android:padding="12dp"
         android:text="@string/sign_in"/>
 
-    <TextView android:id="@+id/link_signup"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="@string/SignUp"
+        android:orientation="horizontal"
         android:gravity="center"
-        android:textSize="16sp"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textStyle="normal|bold" />
+        >
+
+        <TextView android:id="@+id/text_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_account_yet"
+            android:textSize="16sp"
+            android:textStyle="normal|bold" />
+
+        <TextView android:id="@+id/link_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/SignUp"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
+            android:textStyle="normal|bold" />
+
+
+    </LinearLayout>
+
 
     <Button
         style="@style/SignIn"

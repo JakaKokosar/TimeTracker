@@ -47,6 +47,8 @@ public class Registration extends AppCompatActivity  implements
                 bundle.putString("UserID", id);
                 intent.putExtras(bundle);
                 startActivity(intent);
+                finish();
+
             }
             myDb.close();
         }

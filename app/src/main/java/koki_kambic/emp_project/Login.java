@@ -28,6 +28,7 @@ public class Login extends AppCompatActivity implements
 
     private static final String TAG = "SignInActivity";
     DatabaseConnector myDb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -103,7 +104,7 @@ public class Login extends AppCompatActivity implements
                 startActivity(intent);}
             else err.setText("Napačno uporabniško ime ali geslo");
         }
-        else err.setText("Urorabnik ne obstaja");
+        else err.setText("Uporabnik ne obstaja");
         myDb.close();
     }
 
@@ -133,16 +134,16 @@ public class Login extends AppCompatActivity implements
             // TODO: POJDI NA NOV ACTIVITY, S SABO NESI VSE POTRENE INFO
             GoogleSignInAccount acct = result.getSignInAccount();
             assert acct != null;
-
-            Toast toast = Toast.makeText(Login.this, acct.getId(), Toast.LENGTH_SHORT);
-            toast.show();
-            String mFullName = acct.getDisplayName();
-            Intent intent = new Intent(Login.this, Tasks.class);
+            //Toast toast = Toast.makeText(Login.this, acct.getId(), Toast.LENGTH_SHORT);
+            //toast.show();  String mFullName = acct.getDisplayName();
+            String googleID = acct.getId();
             //save id in database
-            myDb.insertUserID(Integer.parseInt(acct.getId()));
+            //myDb.insertUserID(Integer.parseInt(googleID));
+
             //send id to task activity
+            Intent intent = new Intent(Login.this, Tasks.class);
             Bundle bundle = new Bundle();
-            bundle.putString("UserID", acct.getId());
+            bundle.putString("UserID", googleID);
             intent.putExtras(bundle);
             startActivity(intent);
 

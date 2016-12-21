@@ -3,8 +3,11 @@
     <string name="sign_in">Sign in</string>
     <string name="user">Username</string>
     <string name="password">Password</string>
-    <string name="SignUp">No account yet? Create one</string>
+    <string name="SignUp">Create one</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="logout">Logout</string>
     <string name="register">Register now</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="no_account_yet">No account yet? \u0020</string>
 </resources>
