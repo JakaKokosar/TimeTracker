@@ -14,7 +14,7 @@ import java.util.Random;
 public class DatabaseConnector {
 
     private static final String DATABASE_NAME = "Data";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
     private SQLiteDatabase database;
     private DatabaseOpenHelper databaseOpenHelper;
 
@@ -32,7 +32,7 @@ public class DatabaseConnector {
     }
 
     //check if userId exist
-    boolean ExistId(int id){
+    boolean ExistId(String id){
         Cursor cr = database.rawQuery("SELECT * FROM Users " +
                 "WHERE id = '"+id+"';",null);
         int i =cr.getCount();
@@ -47,7 +47,7 @@ public class DatabaseConnector {
          cr.close();
          return (i != 0);
     }
-    //if password or/and username are incorrect then cr == null(return false)
+    //if password or/and username are incorrect then return false
     boolean CheckPassword(String username, String password){
         Cursor cr = database.rawQuery("SELECT * FROM LocalUsers " +
                 "WHERE username = '"+username+"' " +
@@ -57,13 +57,13 @@ public class DatabaseConnector {
         return (i != 0);
     }
     //generate id for local users
-    int generateID(){
+    private String generateID(){
         int min = 10000000;
         int max = 999999999;
         Random r = new Random();
-        return r.nextInt((max - min) + 1) + min;
+        return String.valueOf(r.nextInt((max - min) + 1) + min);
     }
-    void insertUserID(int id){
+    void insertUserID(String id){
         if(!ExistId(id)) {
             String insertValuesUsers = "INSERT INTO Users (id) " +
                     "values('" + id + "')";
@@ -79,22 +79,25 @@ public class DatabaseConnector {
     //return all tasks for the userID
     ArrayList<String> getTasksByUserId(String id){
         ArrayList <String> tasks = new ArrayList<String>();
-        Cursor cr = database.rawQuery("SELECT name FROM Tasks, Users " +
-                "WHERE Tasks.idUser = Users.id; " +
-                "AND Users.id = '"+id+"'",null);
+        tasks.add("test");
+       // Cursor cr = database.rawQuery("SELECT * FROM Tasks", null);
+        /*
+        if(cr == null)
+            return tasks;
         if (cr.getCount() > 0)
         {
             cr.moveToFirst();
             do {
                 tasks.add( cr.getString(cr.getColumnIndex("name")) );
             } while (cr.moveToNext());
-            cr.close();
-        }
-            return tasks;
+
+        }*/
+       // cr.close();
+        return tasks;
     }
     // insert new user
     void insertLocaluser(String username, String passwd){
-        int id;
+        String id;
         do {id = generateID();} while(ExistId(id));//dokler ni unikaten ID
         insertUserID(id);
         String insertValuesLocalUsers = "INSERT INTO LocalUsers " +
@@ -116,7 +119,7 @@ public class DatabaseConnector {
         //taski za vsakega userja
         private String createTasks = "CREATE TABLE Tasks"
                 + "(idTask INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "idUser INTEGER NOT NULL ,"
+                + "idUser TEXT NOT NULL ,"
                 + "name TEXT NOT NULL,"
                 + "FOREIGN KEY(idUser) REFERENCES Users(id));";
         // lokalni uporabniki
@@ -126,7 +129,7 @@ public class DatabaseConnector {
                 + "FOREIGN KEY(idUser) REFERENCES Users(id));";
         //lokalni uporabniki + tisti ki se registrirajo z google računom
         private String createUsers = "CREATE TABLE Users"
-                + "(id INTEGER PRIMARY KEY NOT NULL);";
+                + "(id TEXT PRIMARY KEY NOT NULL);";
 
         // časi za vsako opravilo
         private String createTime = "CREATE TABLE Time"

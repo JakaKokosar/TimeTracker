@@ -101,6 +101,7 @@ public class Login extends AppCompatActivity implements
                 Bundle bundle = new Bundle();
                 bundle.putString("UserID", myDb.getLocalUserID(username));
                 intent.putExtras(bundle);
+                myDb.close();
                 startActivity(intent);}
             else err.setText("Napačno uporabniško ime ali geslo");
         }
@@ -136,9 +137,10 @@ public class Login extends AppCompatActivity implements
             assert acct != null;
             //Toast toast = Toast.makeText(Login.this, acct.getId(), Toast.LENGTH_SHORT);
             //toast.show();  String mFullName = acct.getDisplayName();
-            String googleID = acct.getId();
+
             //save id in database
-            //myDb.insertUserID(Integer.parseInt(googleID));
+            String googleID = acct.getId();
+            myDb.insertUserID(acct.getId());
 
             //send id to task activity
             Intent intent = new Intent(Login.this, Tasks.class);
