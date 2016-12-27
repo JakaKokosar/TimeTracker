@@ -40,7 +40,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
             @Override
             public void onClick(View view) {
                 card.setBackgroundColor(Color.parseColor("#C5E1A5"));
-                start.setEnabled(true);
+                start.setEnabled(true); stop.setEnabled(false);
             }
         });
     }

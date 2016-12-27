@@ -42,7 +42,7 @@ public class Tasks extends AppCompatActivity {
         initializeList();
 
         RecyclerView cardView = (RecyclerView) findViewById(R.id.cardView);
-        if (items.size() > 0 & cardView != null) {
+        if (cardView != null) {
             cardView.setAdapter(new TaskAdapter(items));
         }
         SpacesItemDecoration spaces = new SpacesItemDecoration(36);
