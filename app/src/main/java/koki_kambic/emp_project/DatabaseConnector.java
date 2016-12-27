@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.math.BigInteger;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,7 +15,7 @@ import java.util.Random;
 public class DatabaseConnector {
 
     private static final String DATABASE_NAME = "Data";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private SQLiteDatabase database;
     private DatabaseOpenHelper databaseOpenHelper;
 
@@ -40,7 +41,7 @@ public class DatabaseConnector {
         return (i != 0);
     }
     //check if local username exist
-     boolean UserExist(String username){
+    boolean UserExist(String username){
          Cursor cr = database.rawQuery("SELECT * FROM LocalUsers " +
                 "WHERE username = '"+username+"';",null);
          int i =cr.getCount();
@@ -63,6 +64,7 @@ public class DatabaseConnector {
         Random r = new Random();
         return String.valueOf(r.nextInt((max - min) + 1) + min);
     }
+    // insert User ID if ID does not exist in database
     void insertUserID(String id){
         if(!ExistId(id)) {
             String insertValuesUsers = "INSERT INTO Users (id) " +
@@ -76,23 +78,22 @@ public class DatabaseConnector {
                 "values(NULL, '"+userID+"', '"+TaskName+"')";
         database.execSQL(insertValuesUsers);
     }
-    //return all tasks for the userID
-    ArrayList<String> getTasksByUserId(String id){
-        ArrayList <String> tasks = new ArrayList<String>();
-        tasks.add("test");
-       // Cursor cr = database.rawQuery("SELECT * FROM Tasks", null);
-        /*
-        if(cr == null)
-            return tasks;
+    //return all tasks for the userID(taskID,TaskName)
+    ArrayList<String[]> getTasksByUserId(String id){
+        ArrayList <String[]> tasks = new ArrayList<String[]>();
+        Cursor cr = database.rawQuery("SELECT * FROM Tasks " +
+               "WHERE idUser ='"+id+"'", null);
         if (cr.getCount() > 0)
         {
             cr.moveToFirst();
             do {
-                tasks.add( cr.getString(cr.getColumnIndex("name")) );
+                String taskId = cr.getString(cr.getColumnIndex("idTask"));
+                String taskName = cr.getString(cr.getColumnIndex("name"));
+                tasks.add(new String[]{taskId,taskName} );
             } while (cr.moveToNext());
 
-        }*/
-       // cr.close();
+        }
+        cr.close();
         return tasks;
     }
     // insert new user
@@ -115,6 +116,41 @@ public class DatabaseConnector {
         id = cr.getString(cr.getColumnIndexOrThrow("id"));
         return id;
     }
+    //add time and date (time in seconds, date(yyy-MM-dd))
+    void AddTime(String userId,String taskId, int time, String date ){
+        String insertValuesUsers = "INSERT INTO Time (idTime,idTask, idUser,time, date)" +
+                "values(NULL, '"+taskId+"', '"+userId+"', '"+time+"', '"+date+"')";
+        database.execSQL(insertValuesUsers);
+
+    }
+    //return array(days, time)
+    String[] getTime(String idTask, String idUser){
+        int days = 0, time = 0;
+        Cursor cr = database.rawQuery("SELECT  DISTINCT date FROM Time " +
+                "WHERE idUser ='"+idUser+"' AND " +
+                "idTask = '"+idTask+"'", null);
+        // if getCount ==0 user does not work on this task return 0 days 0 hours
+        if(cr.getCount()<1){
+            cr.close();
+            return new String[]{String.valueOf(days), String.valueOf(time)};
+        }
+        else {
+            days = cr.getCount();
+            cr = database.rawQuery("SELECT  * FROM Time " +
+                    "WHERE idUser ='"+idUser+"' AND " +
+                    "idTask = '"+idTask+"'", null);
+            while (cr.moveToNext())//time in seconds
+                time+= Integer.parseInt( cr.getString(cr.getColumnIndex("time")) );
+        }
+
+        cr.close();
+        return new String[]{String.valueOf(days), String.valueOf(time/3600)};
+    }
+    void addTaskDescription(String idTask, String idUser, String description){
+        String insertValuesUsers = "INSERT INTO TaskDescription (idTaskDescription,idTask, idUser,description)" +
+                "values(NULL, '"+idTask+"', '"+idUser+"', '"+description+"')";
+        database.execSQL(insertValuesUsers);
+    }
     private class DatabaseOpenHelper extends SQLiteOpenHelper {
         //taski za vsakega userja
         private String createTasks = "CREATE TABLE Tasks"
@@ -135,9 +171,8 @@ public class DatabaseConnector {
         private String createTime = "CREATE TABLE Time"
                 + "(idTime INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "idTask INTEGER NOT NULL,"
-                + "idUser INTEGER NOT NULL,"
-                + "Start time NOT NULL,"
-                + "stop time NOT NULL,"
+                + "idUser TEXT NOT NULL,"
+                + "time INTEGER NOT NULL,"
                 + "date DATE NOT NULL,"
                 + "FOREIGN KEY(idTask) REFERENCES Tasks(idTask)"
                 + "FOREIGN KEY(idUser) REFERENCES Users(id));";
@@ -145,7 +180,7 @@ public class DatabaseConnector {
         private String createTaskDescription = "CREATE TABLE TaskDescription"
                 + "(idTaskDescription INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "idTask INTEGER NOT NULL,"
-                + "idUser INTEGER NOT NULL,"
+                + "idUser TEXT NOT NULL,"
                 + "description TEXT NOT NULL,"
                 + "FOREIGN KEY(idTask) REFERENCES Tasks(idTask)"
                 + "FOREIGN KEY(idUser) REFERENCES Users(id));";

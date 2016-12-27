@@ -94,7 +94,10 @@ public class Login extends AppCompatActivity implements
         String password=passwd_ET.getText().toString();
         myDb.open();
         boolean userExist = myDb.UserExist(username);
-        if (userExist) {
+        if(username.length()<1 && password.length()<1){
+            err.setText("vnesite podatke v oba polja");
+        }
+        else if (userExist) {
             boolean checkPasswd =myDb.CheckPassword(username, password);
             if(checkPasswd){
                 Intent intent = new Intent(Login.this, Tasks.class);
@@ -140,8 +143,9 @@ public class Login extends AppCompatActivity implements
 
             //save id in database
             String googleID = acct.getId();
+            myDb.open();
             myDb.insertUserID(acct.getId());
-
+            myDb.close();
             //send id to task activity
             Intent intent = new Intent(Login.this, Tasks.class);
             Bundle bundle = new Bundle();
