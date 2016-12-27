@@ -22,6 +22,9 @@
         <activity
             android:name=".Registration"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".AddTask"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

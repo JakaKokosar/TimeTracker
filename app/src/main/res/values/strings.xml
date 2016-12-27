@@ -10,4 +10,7 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="no_account_yet">No account yet? \u0020</string>
+    <string name="add_task">Add task</string>
+    <string name="task_name">Task name</string>
+    <string name="nameTask">Task name</string>
 </resources>
