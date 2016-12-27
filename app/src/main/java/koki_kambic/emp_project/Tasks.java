@@ -74,12 +74,13 @@ public class Tasks extends AppCompatActivity {
 
     public void initializeList() {
         items.clear();
-
+        myDb.open();
         for(int i =0;i<tasks.size();i++){
-            TaskModel tm = new TaskModel(tasks.get(i)[0],tasks.get(i)[1]);
+            TaskModel tm = new TaskModel(tasks.get(i)[0],tasks.get(i)[1],
+                    myDb.getTime(tasks.get(i)[0],tasks.get(i)[2]));
             items.add(tm);
         }
-
+        myDb.close();
     }
 
     @Override
