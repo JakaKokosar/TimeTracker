@@ -13,14 +13,14 @@ import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class Tasks extends AppCompatActivity {
     DatabaseConnector myDb;
+    Calendar c = Calendar.getInstance();
     ArrayList<TaskModel> items = new ArrayList<>();
-    ArrayList <String> tasks = new ArrayList<String>();
-    String testItems[] = {"Work","School","Sport"};
-
+    ArrayList <String[]> tasks = new ArrayList<String[]>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,10 @@ public class Tasks extends AppCompatActivity {
                 UserId = bundle.getString("UserID");
             }
         }
+        //get tasks array({id, taskName})
+        myDb.open();
         tasks = myDb.getTasksByUserId(UserId);
+        myDb.close();
 
         initializeList();
 
@@ -50,7 +53,7 @@ public class Tasks extends AppCompatActivity {
             cardView.setLayoutManager(new LinearLayoutManager(this));
             cardView.addItemDecoration(spaces);
         }
-        // add new task
+        // open activity AddTask on click FloatingActionButton
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         final String finalUserId = UserId;
         fab.setOnClickListener(new View.OnClickListener() {
@@ -73,10 +76,8 @@ public class Tasks extends AppCompatActivity {
         items.clear();
 
         for(int i =0;i<tasks.size();i++){
-            TaskModel tm = new TaskModel();
-            tm.setTaskName(tasks.get(i));
+            TaskModel tm = new TaskModel(tasks.get(i)[0],tasks.get(i)[1]);
             items.add(tm);
-
         }
 
     }
@@ -93,8 +94,12 @@ public class Tasks extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()){
-            case R.id.logout_activity:
-                finish();
+            case R.id.logout_activity: {
+                Intent intent=new Intent(this, Login.class);
+                //close all the Activities(baje tak piše na stackoverflow :-) )
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }
         return true;
     }
