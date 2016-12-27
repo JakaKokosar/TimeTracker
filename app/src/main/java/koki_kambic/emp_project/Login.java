@@ -135,7 +135,6 @@ public class Login extends AppCompatActivity implements
     private void handleSignInResult(GoogleSignInResult result) {
 
         if (result.isSuccess()) {
-            // TODO: POJDI NA NOV ACTIVITY, S SABO NESI VSE POTRENE INFO
             GoogleSignInAccount acct = result.getSignInAccount();
             assert acct != null;
             //Toast toast = Toast.makeText(Login.this, acct.getId(), Toast.LENGTH_SHORT);
@@ -144,7 +143,7 @@ public class Login extends AppCompatActivity implements
             //save id in database
             String googleID = acct.getId();
             myDb.open();
-            myDb.insertUserID(acct.getId());
+            myDb.insertUserID(googleID);
             myDb.close();
             //send id to task activity
             Intent intent = new Intent(Login.this, Tasks.class);

@@ -21,6 +21,7 @@ public class Tasks extends AppCompatActivity {
     Calendar c = Calendar.getInstance();
     ArrayList<TaskModel> items = new ArrayList<>();
     ArrayList <String[]> tasks = new ArrayList<String[]>();
+    String UserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,7 @@ public class Tasks extends AppCompatActivity {
         setContentView(R.layout.activity_tasks);
         myDb = new DatabaseConnector(this);
         // get user ID
-        String UserId = "";
+        UserId = "";
         Intent intent = getIntent();
         if (intent != null) {
             final Bundle bundle = intent.getExtras();
@@ -36,11 +37,8 @@ public class Tasks extends AppCompatActivity {
                 UserId = bundle.getString("UserID");
             }
         }
-        //get tasks array({id, taskName})
-        myDb.open();
-        tasks = myDb.getTasksByUserId(UserId);
-        myDb.close();
 
+        updatTaskList(UserId);
         initializeList();
 
         RecyclerView cardView = (RecyclerView) findViewById(R.id.cardView);
@@ -53,6 +51,7 @@ public class Tasks extends AppCompatActivity {
             cardView.setLayoutManager(new LinearLayoutManager(this));
             cardView.addItemDecoration(spaces);
         }
+
         // open activity AddTask on click FloatingActionButton
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         final String finalUserId = UserId;
@@ -66,9 +65,14 @@ public class Tasks extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        //FragmentManager fm = getSupportFragmentManager();
-        //Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
-        //fm.beginTransaction().add(R.id.fragmentContainer, fragment).commit();
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        updatTaskList(UserId);
+        initializeList();
 
     }
 
@@ -80,6 +84,13 @@ public class Tasks extends AppCompatActivity {
                     myDb.getTime(tasks.get(i)[0],tasks.get(i)[2]));
             items.add(tm);
         }
+        myDb.close();
+    }
+
+    public void updatTaskList(String UserId){
+        //get tasks array({id, taskName})
+        myDb.open();
+        tasks = myDb.getTasksByUserId(UserId);
         myDb.close();
     }
 
@@ -96,10 +107,7 @@ public class Tasks extends AppCompatActivity {
 
         switch (item.getItemId()){
             case R.id.logout_activity: {
-                Intent intent=new Intent(this, Login.class);
-                //close all the Activities(baje tak piše na stackoverflow :-) )
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                finish();
             }
         }
         return true;
