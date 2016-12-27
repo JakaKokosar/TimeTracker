@@ -20,13 +20,13 @@ import java.util.ArrayList;
 public class TaskAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private ArrayList<TaskModel> list;
-
     public TaskAdapter(ArrayList<TaskModel> Data) {
         list = Data;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         // create a new view
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card, parent, false);
@@ -36,8 +36,9 @@ public class TaskAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-
         holder.titleTextView.setText(list.get(position).getTaskName());
+        holder.daysWorked.setText("Days: "+list.get(position).getTaskDays());
+        holder.hoursWorked.setText("Hours: "+list.get(position).getTaskHours());
     }
 
     @Override

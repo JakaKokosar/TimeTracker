@@ -10,15 +10,20 @@ import android.widget.TextView;
 public class MyViewHolder extends RecyclerView.ViewHolder{
 
     public TextView titleTextView;
+
+    public TextView daysWorked;
+    public TextView hoursWorked;
+
     public LinearLayout card;
     public Button start;
     public Button stop;
-
 
     public MyViewHolder(View v) {
         super(v);
         card = (LinearLayout) v.findViewById(R.id.coverView);
         titleTextView = (TextView) v.findViewById(R.id.titleTextView);
+        daysWorked = (TextView) v.findViewById(R.id.daysWorked);
+        hoursWorked = (TextView) v.findViewById(R.id.hoursWorked);
         start =  (Button) v.findViewById(R.id.btn_start);
         stop =  (Button) v.findViewById(R.id.btn_stop);
 
@@ -38,7 +43,6 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
                 start.setEnabled(true);
             }
         });
-
     }
 
 }

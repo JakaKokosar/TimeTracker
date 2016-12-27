@@ -89,7 +89,8 @@ public class DatabaseConnector {
             do {
                 String taskId = cr.getString(cr.getColumnIndex("idTask"));
                 String taskName = cr.getString(cr.getColumnIndex("name"));
-                tasks.add(new String[]{taskId,taskName} );
+                String userId = cr.getString(cr.getColumnIndex("idUser"));
+                tasks.add(new String[]{taskId,taskName,userId} );
             } while (cr.moveToNext());
 
         }
