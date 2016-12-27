@@ -27,7 +27,7 @@
 
                 <LinearLayout
                     android:id="@+id/coverView"
-                    android:background="#9CCC65"
+                    android:background="@color/inactive"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
@@ -44,7 +44,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="To bo ime activitiya"
-                            android:padding="16dp"
+                            android:padding="10dp"
                             android:textSize="@dimen/text_size"
                             android:textColor="@color/colorAccent"
                             android:textStyle="bold" />
@@ -65,7 +65,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dp"
                         android:text="Days: X"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:textSize="@dimen/text_size"
                         android:textColor="@color/colorAccent"
                         android:textStyle="bold" />
@@ -76,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dp"
                         android:text="Hours: X"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:textSize="@dimen/text_size"
                         android:textColor="@color/colorAccent"
                         android:textStyle="bold" />
@@ -91,10 +91,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="0.8"
-            android:gravity="center|end"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/btn_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/start"
@@ -108,8 +109,10 @@
                 android:id="@+id/separator1" />
 
             <Button
+                android:id="@+id/btn_stop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:enabled = "false"
                 android:text="@string/stop"
                 style="@style/Widget.AppCompat.Button.Borderless"/>
         </LinearLayout>

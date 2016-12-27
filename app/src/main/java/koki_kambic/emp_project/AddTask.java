@@ -43,11 +43,8 @@ public class AddTask extends AppCompatActivity {
             myDb.open();
             myDb.insertTask(taskName,userId);
             myDb.close();
-            Intent intent = new Intent(AddTask.this, Tasks.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("UserID", userId);
-            intent.putExtras(bundle);
-            startActivity(intent);
+            finish();
+
         }
         else {
             textView.setText("enter Task name");
