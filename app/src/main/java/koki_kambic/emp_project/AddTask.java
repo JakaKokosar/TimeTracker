@@ -12,13 +12,12 @@ import com.google.android.gms.gcm.Task;
 
 public class AddTask extends AppCompatActivity {
     DatabaseConnector myDb;
-    @Override
+    String UserId;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
         myDb = new DatabaseConnector(this);
         // get user ID
-        String UserId = "";
         Intent intent = getIntent();
         if (intent != null) {
             final Bundle bundle = intent.getExtras();

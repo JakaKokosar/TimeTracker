@@ -39,6 +39,9 @@ public class TaskAdapter extends RecyclerView.Adapter<MyViewHolder> {
         holder.titleTextView.setText(list.get(position).getTaskName());
         holder.daysWorked.setText("Days: "+list.get(position).getTaskDays());
         holder.hoursWorked.setText("Hours: "+list.get(position).getTaskHours());
+        holder.context = list.get(position).getContext();
+        holder.UserId = list.get(position).getUserID();
+        holder.TaskId = list.get(position).getTaskID();
     }
 
     @Override
