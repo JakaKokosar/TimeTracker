@@ -2,11 +2,15 @@ package koki_kambic.emp_project;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,6 +25,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
     Context context;
     public String UserId;
     public String TaskId;
+    public String opis;
     public TextView titleTextView;
     public TextView daysWorked;
     public TextView hoursWorked;
@@ -65,6 +70,26 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
                 String[] time =myDb.getTime(TaskId,UserId);
                 hoursWorked.setText("Hours: "+time[1]);
                 daysWorked.setText("Days: "+time[0]);
+
+                View view1 = LayoutInflater.from(context).inflate(R.layout.activity_alert,null);
+                final EditText editText = (EditText) view1.findViewById(R.id.input_description);
+                AlertDialog.Builder builder = new  AlertDialog.Builder(context);
+                opis ="";
+                builder.setMessage("Description:")
+                        .setView(view1)
+                        .setPositiveButton("Add ", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                opis = editText.getText().toString();
+                            }
+                        })
+                        .setNegativeButton("Cancel",null)
+                        .setCancelable(false);
+                AlertDialog alert = builder.create();
+                alert.show();
+                if(opis.length()>=1){
+                    myDb.addTaskDescription(TaskId,UserId,opis);
+                }
                 myDb.close();
             }
         });
