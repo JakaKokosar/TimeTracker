@@ -18,7 +18,6 @@ import java.util.Calendar;
 
 public class Tasks extends AppCompatActivity {
     DatabaseConnector myDb;
-    Calendar c = Calendar.getInstance();
     ArrayList<TaskModel> items = new ArrayList<>();
     ArrayList <String[]> tasks = new ArrayList<String[]>();
     String UserId;
@@ -81,7 +80,7 @@ public class Tasks extends AppCompatActivity {
         myDb.open();
         for(int i =0;i<tasks.size();i++){
             TaskModel tm = new TaskModel(tasks.get(i)[0],tasks.get(i)[1],
-                    myDb.getTime(tasks.get(i)[0],tasks.get(i)[2]));
+                    myDb.getTime(tasks.get(i)[0],tasks.get(i)[2]),this,UserId);
             items.add(tm);
         }
         myDb.close();
