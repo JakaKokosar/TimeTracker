@@ -147,10 +147,10 @@ public class DatabaseConnector {
         cr.close();
         return new String[]{String.valueOf(days), String.valueOf(time/3600)};
     }
-    void addTaskDescription(String idTask, String idUser, String description){
-        String insertValuesUsers = "INSERT INTO TaskDescription (idTaskDescription,idTask, idUser,description)" +
-                "values(NULL, '"+idTask+"', '"+idUser+"', '"+description+"')";
-        database.execSQL(insertValuesUsers);
+    void addTaskDescription(int idTask, String idUser, String description){
+        String insert = "INSERT INTO TaskDescription (idTaskDescription,idTask, idUser,description)" +
+                "values(NULL, "+idTask+", '"+idUser+"', '"+description+"')";
+        database.execSQL(insert);
     }
     private class DatabaseOpenHelper extends SQLiteOpenHelper {
         //taski za vsakega userja
