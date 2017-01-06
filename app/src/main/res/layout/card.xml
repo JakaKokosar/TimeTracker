@@ -115,6 +115,21 @@
                 android:enabled = "false"
                 android:text="@string/stop"
                 style="@style/Widget.AppCompat.Button.Borderless"/>
+
+            <View android:layout_height="fill_parent"
+                android:layout_width="1px"
+                android:background="#90909090"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:id="@+id/separator3" />
+
+            <Button
+                android:id="@+id/btn_izpis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled = "true"
+                android:text="@string/view"
+                style="@style/Widget.AppCompat.Button.Borderless"/>
         </LinearLayout>
 
     </LinearLayout>

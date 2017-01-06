@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 
 public class Login extends AppCompatActivity implements
@@ -37,6 +38,7 @@ public class Login extends AppCompatActivity implements
         myDb = new DatabaseConnector(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestScopes(new Scope("https://www.googleapis.com/auth/spreadsheets"), new Scope("https://www.googleapis.com/auth/drive"))
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)

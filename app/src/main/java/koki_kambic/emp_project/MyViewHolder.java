@@ -1,10 +1,14 @@
 package koki_kambic.emp_project;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,9 +25,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
 public class MyViewHolder extends RecyclerView.ViewHolder{
     DatabaseConnector myDb;
     Context context;
+    private NotificationManager notificationManager;
+
     public String UserId;
     public String TaskId;
     public String opis;
@@ -33,8 +40,10 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
     public LinearLayout card;
     public Button start;
     public Button stop;
+    public Button izpis;
     public int startTime;
     public int stopTime;
+
 
     public MyViewHolder(final View v) {
         super(v);
@@ -44,6 +53,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
         hoursWorked = (TextView) v.findViewById(R.id.hoursWorked);
         start =  (Button) v.findViewById(R.id.btn_start);
         stop =  (Button) v.findViewById(R.id.btn_stop);
+        izpis =  (Button) v.findViewById(R.id.btn_izpis);
 
 
         start.setOnClickListener(new View.OnClickListener() {
@@ -53,6 +63,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
                 start.setEnabled(false); stop.setEnabled(true);
                 Calendar c = Calendar.getInstance();
                 startTime = (int)TimeUnit.MILLISECONDS.toSeconds(c.getTimeInMillis());
+                createNotification(titleTextView.getText().toString());
             }
         });
 
@@ -88,10 +99,49 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
                         daysWorked.setText("Days: "+time[0]);
                         myDb.close();
                         ad.dismiss();
+                        notificationManager.cancel(1);
                     }
                 });
             }
         });
+
+        izpis.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+
+
+            }
+
+
+        });
+    }
+
+    public void createNotification(String work) {
+        // Prepare intent which is triggered if the
+        // notification is selected
+        //Intent intent = new Intent(this, NotificationReceiverActivity.class);
+        //PendingIntent pIntent = PendingIntent.getActivity(getActivity(), (int) System.currentTimeMillis(), intent, 0);
+
+        // Build notification
+        // Actions are just fake
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.ic_stat_name)
+                .setContentTitle("You are working on:")
+                .setContentText(work);
+
+        /*
+        Intent notificationIntent = new Intent(context, null);
+
+        PendingIntent contentIntent = getActivity(getActivity(), 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
+        */
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, builder.build());
+
+
+
     }
 
 
