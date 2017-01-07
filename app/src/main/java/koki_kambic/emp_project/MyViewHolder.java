@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -18,19 +20,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 
 public class MyViewHolder extends RecyclerView.ViewHolder{
     DatabaseConnector myDb;
     Context context;
     private NotificationManager notificationManager;
-
     public String UserId;
     public String TaskId;
     public String opis;
@@ -93,10 +105,17 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
                         myDb.open();
                         myDb.AddTime(UserId,TaskId,(int)(stopTime-startTime),dateFormat.format(new Date()));
                         String[] time =myDb.getTime(TaskId,UserId);
-                        if(opis.length()>=1)
-                            myDb.addTaskDescription(Integer.parseInt(TaskId),UserId,opis);
+                        if(opis.length()>=1) {
+                            myDb.addTaskDescription(Integer.parseInt(TaskId), UserId, opis);
+                        }
+
                         hoursWorked.setText("Hours: "+time[1]);
                         daysWorked.setText("Days: "+time[0]);
+                        String name =myDb.getTaskNameById(TaskId);
+                        String write = dateFormat.format(new Date()) + " " + (stopTime - startTime) + " sekund " + opis +"\n";
+                        Log.i("test","1");
+                        writeInFile(name, write);
+                        Log.i("test","5");
                         myDb.close();
                         ad.dismiss();
                         notificationManager.cancel(1);
@@ -109,8 +128,17 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
 
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(context, PrintDescription.class);
+                myDb = new DatabaseConnector(context);
+                myDb.open();
+                String name = myDb.getTaskNameById(TaskId);
+                myDb.close();
+                Bundle bundle = new Bundle();
+                bundle.putString("taskName", name);
+                bundle.putString("taskId", TaskId);
 
-
+                intent.putExtras(bundle);
+                context.startActivity(intent);
             }
 
 
@@ -143,7 +171,46 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
 
 
     }
+    void writeInFile(String taskName, String write){
+        String filename = taskName;
 
+        FileOutputStream outputStream;
+        FileInputStream inputStream;
+        String temp ="";
+        try {
+            inputStream = context.openFileInput(filename);
+            int c;
+
+            while( (c = inputStream.read()) != -1)
+                temp = temp + Character.toString((char)c);
+            inputStream.close();
+        } catch (Exception e) {
+            //Toast.makeText(context,e.toString(),Toast.LENGTH_LONG).show();
+        }
+        String string =temp + write;
+        try {
+            outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(string.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            Toast.makeText(context,e.toString(),Toast.LENGTH_LONG).show();
+        }
+        try {
+            inputStream = context.openFileInput(filename);
+            int c;
+            temp ="";
+            while( (c = inputStream.read()) != -1){
+                temp = temp + Character.toString((char)c);
+            }
+            inputStream.close();
+            Toast.makeText(context,temp,Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(context,e.toString(),Toast.LENGTH_LONG).show();
+        }
+
+
+
+    }
 
 
 }
