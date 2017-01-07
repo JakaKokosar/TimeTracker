@@ -32,6 +32,17 @@ public class DatabaseConnector {
         if (database != null) database.close();
     }
 
+    //return task name
+    String getTaskNameById(String id){
+        String name ="";
+        Cursor cr = database.rawQuery("SELECT * FROM Tasks " +
+                "WHERE idTask = '"+id+"'",null);
+        if(cr.getCount()>0){
+            cr.moveToFirst();
+            name = cr.getString(cr.getColumnIndex("name"));
+        }
+        return name;
+    }
     //check if userId exist
     boolean ExistId(String id){
         Cursor cr = database.rawQuery("SELECT * FROM Users " +
@@ -42,11 +53,11 @@ public class DatabaseConnector {
     }
     //check if local username exist
     boolean UserExist(String username){
-         Cursor cr = database.rawQuery("SELECT * FROM LocalUsers " +
+        Cursor cr = database.rawQuery("SELECT * FROM LocalUsers " +
                 "WHERE username = '"+username+"';",null);
-         int i =cr.getCount();
-         cr.close();
-         return (i != 0);
+        int i =cr.getCount();
+        cr.close();
+        return (i != 0);
     }
     //if password or/and username are incorrect then return false
     boolean CheckPassword(String username, String password){
@@ -82,7 +93,7 @@ public class DatabaseConnector {
     ArrayList<String[]> getTasksByUserId(String id){
         ArrayList <String[]> tasks = new ArrayList<String[]>();
         Cursor cr = database.rawQuery("SELECT * FROM Tasks " +
-               "WHERE idUser ='"+id+"'", null);
+                "WHERE idUser ='"+id+"'", null);
         if (cr.getCount() > 0)
         {
             cr.moveToFirst();
