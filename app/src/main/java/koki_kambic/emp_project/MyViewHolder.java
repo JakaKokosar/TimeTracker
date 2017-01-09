@@ -7,6 +7,7 @@ import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,7 +30,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 import java.text.DateFormat;
@@ -37,6 +40,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class MyViewHolder extends RecyclerView.ViewHolder{
@@ -55,6 +64,17 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
     public Button izpis;
     public int startTime;
     public int stopTime;
+
+
+    public static final MediaType FORM_DATA_TYPE = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
+    //URL
+    public static final String URL="https://docs.google.com/forms/d/e/1FAIpQLSeB8pLRjXkKvx8koYkH5hQ4v1dBtzdErq187s_1O7Ab65vziA/formResponse";
+    //input element ids found from the live form page
+    public static final String TAKS_ENTRY = "entry.1731516864";
+    public static final String DATE_ENTRY = "entry.853258547";
+    public static final String TIME_ENTRY = "entry.1478802845";
+    public static final String DESC_ENTRY = "entry.1811092066";
+
 
 
     public MyViewHolder(final View v) {
@@ -103,7 +123,13 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
                         opis = editText.getText().toString();
                         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         myDb.open();
-                        myDb.AddTime(UserId,TaskId,(int)(stopTime-startTime),dateFormat.format(new Date()));
+                        int startStopTime = (int)(stopTime-startTime);
+                        int hours = startStopTime / 3600;
+                        int minutes = (startStopTime % 3600) / 60;
+                        int seconds = startStopTime % 60;
+                        String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+                        myDb.AddTime(UserId,TaskId,startStopTime ,dateFormat.format(new Date()));
                         String[] time =myDb.getTime(TaskId,UserId);
                         if(opis.length()>=1) {
                             myDb.addTaskDescription(Integer.parseInt(TaskId), UserId, opis);
@@ -119,8 +145,16 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
                         myDb.close();
                         ad.dismiss();
                         notificationManager.cancel(1);
+
+
+                        PostData saveToGoogle = new PostData();
+                        saveToGoogle.execute(URL, titleTextView.getText().toString(),
+                                dateFormat.format(new Date()), timeString, opis);
+
                     }
                 });
+
+
             }
         });
 
@@ -210,6 +244,55 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
 
 
 
+    }
+
+
+    private class PostData extends AsyncTask<String, Void, Boolean> {
+
+
+        @Override
+        protected Boolean doInBackground(String... data) {
+            Boolean result = true;
+            String url = data[0];
+            String task = data[1];
+            String date = data[2];
+            String time = data[3];
+            String desc = data[4];
+            String userData="";
+
+
+            try {
+                //Strings must be URL encoded
+                userData = TAKS_ENTRY+ "=" + URLEncoder.encode(task, "UTF-8") +
+                        "&" + DATE_ENTRY + "=" + URLEncoder.encode(date, "UTF-8") +
+                        "&" + TIME_ENTRY + "=" + URLEncoder.encode(time, "UTF-8") +
+                        "&" + DESC_ENTRY + "=" + URLEncoder.encode(desc, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                result=false;
+            }
+
+            try{
+                //Create OkHttpClient
+                OkHttpClient client = new OkHttpClient();
+                //Create the request
+                RequestBody body = RequestBody.create(FORM_DATA_TYPE, userData);
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(body)
+                        .build();
+                //Send the request
+                Response response = client.newCall(request).execute();
+            }catch (IOException exception){
+                result=false;
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result){
+            //Print Success or failure message accordingly
+            Toast.makeText(context,result?"Task description saved!":"Oppss, something went wrong! SORRY",Toast.LENGTH_LONG).show();
+        }
     }
 
 

@@ -43,6 +43,8 @@ public class PrintDescription extends AppCompatActivity {
 
 
 
+
+
         try {
             inputStream = openFileInput(taskName);
             int c;
@@ -58,9 +60,8 @@ public class PrintDescription extends AppCompatActivity {
                     datePrint = new TextView(this);
                     datePrint.setText(data[0]);
                     datePrint.setGravity(Gravity.CENTER);
-
                     timePrint = new TextView(this);
-                    timePrint.setText(data[1]+" "+data[2]);
+                    timePrint.setText(calcTime(data[1]));
                     timePrint.setGravity(Gravity.CENTER);
                     descriptionPrint = new TextView(this);
                     descriptionPrint.setText(izpis);
@@ -81,5 +82,15 @@ public class PrintDescription extends AppCompatActivity {
 
 
 
+    }
+
+    public String calcTime(String inputTime){
+
+        int startStopTime = Integer.parseInt(inputTime);
+        int hours = startStopTime / 3600;
+        int minutes = (startStopTime % 3600) / 60;
+        int seconds = startStopTime % 60;
+        String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        return timeString;
     }
 }

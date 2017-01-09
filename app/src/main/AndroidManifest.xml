@@ -26,7 +26,11 @@
             android:name=".AddTask"
             android:theme="@style/AppTheme" />
         <activity android:name=".alert" />
-        <activity android:name=".PrintDescription"></activity>
+        <activity android:name=".PrintDescription"
+                android:theme="@style/AppTheme"/>
+
+
+
     </application>
 
 </manifest>
